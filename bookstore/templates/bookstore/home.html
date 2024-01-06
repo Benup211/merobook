@@ -1,0 +1,45 @@
+{% extends 'index.html' %}
+{% block content %}
+{% include 'storenavbar.html' %}
+<div class="container mt-4">
+    <form action="{% url 'bookstore:home' %}" method="get">
+        <div class="form-group">
+            <label for="genre" class="col-form-label">Filter By Genre:</label>
+            <select class="form-select" name="genre" id="genre" required>
+                <option value="" hidden selected disabled>Select an Option</option>
+              {% for g in genre %}
+              <option value="{{ g.id }}">{{ g.name }}</option>
+              {% endfor %}
+            </select>
+        </div>
+        <input type="submit" value="Filter" class="btn btn-primary my-2">
+    </form>
+    <h5>Avaliable Books</h5>
+    <div class="row">
+        <div class="col d-lg-flex d-md-flex flex-wrap d-block">
+            {% for book in books %}
+                <div class="card my-2 mx-lg-2 mx-md-2" style="width: 20rem;">
+                    <img src="{{book.book_image.url}}" class="card-img-top" alt="{{book.title}}">
+                    <div class="card-body">
+                    <h5 class="card-title">{{book.title}}</h5>
+                    <p class="card-text">Author:{{book.author}}</p>
+                    <p class="card-text">{{book.description}}</p>
+                    <p class="card-text">Price:{{book.price}}</p>
+                    <form method="post" action="{% url 'bookstore:home' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="book_id" value="{{ book.id }}">
+                        <input type="submit" class="btn btn-primary" value="Add to cart">
+                    </form>
+                    <button class="btn btn-primary mt-1"><a href="{% url 'bookstore:bookdetail' book.id %}" class="text-decoration-none text-white">Detail</a></button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% if messages %}
+    <script>
+        alert("{{ messages }}");
+    </script>
+{% endif %}
+{% endblock %}
